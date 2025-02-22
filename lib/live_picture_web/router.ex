@@ -7,7 +7,11 @@ defmodule LivePictureWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {LivePictureWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    plug :put_secure_browser_headers, %{
+      "content-security-policy" =>
+        "default-src 'self' 'unsafe-inline' opshealth.net *.opshealth.net data:;"
+    }
   end
 
   pipeline :api do
