@@ -17,7 +17,9 @@ defmodule LivePictureWeb.Router do
   scope "/", LivePictureWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PictureLive, :index
+    live "/pictures", PictureLive, :index
+    live "/pictures/new", PictureLive, :new
   end
 
   # Other scopes may use custom stacks.

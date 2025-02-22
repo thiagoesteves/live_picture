@@ -9,6 +9,7 @@ defmodule LivePicture.Application do
   def start(_type, _args) do
     children = [
       LivePictureWeb.Telemetry,
+      LivePicture.Pictures.Storage,
       {DNSCluster, query: Application.get_env(:live_picture, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: LivePicture.PubSub},
       # Start the Finch HTTP client for sending emails
