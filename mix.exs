@@ -60,7 +60,18 @@ defmodule LivePicture.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false}
+      {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
+      {:erlport, "~> 0.10"},
+
+      # ML libraries
+      # {:axon_onnx, "~> 0.4.0"},
+      # {:stb_image, "~> 0.6"},
+      # {:exla, "~> 0.9.0"},
+      # {:nx, "~> 0.9.0"}
+      {:axon_onnx, github: "elixir-nx/axon_onnx"},
+      {:stb_image, "~> 0.6.0"},
+      {:exla, "~> 0.9.0"},
+      {:nx, "~> 0.9.0"}
     ]
   end
 

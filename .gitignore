@@ -35,3 +35,7 @@ live_picture-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Ignore onnx models
+/priv/python/models/*.onnx
+/priv/python/models/__pycache__
+

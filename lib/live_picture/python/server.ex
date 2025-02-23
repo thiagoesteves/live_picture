@@ -1,7 +1,10 @@
-defmodule LivePicture.Pictures.Storage do
-  @moduledoc false
+defmodule LivePicture.Python do
+  @moduledoc """
+  Server responsible for handling Python requests.
+  """
 
   use GenServer
+
   require Logger
 
   ### ==========================================================================
@@ -14,37 +17,32 @@ defmodule LivePicture.Pictures.Storage do
 
   @impl true
   def init(_args) do
-    :ets.new(__MODULE__, [:set, :protected, :named_table])
+    path =
+      [:code.priv_dir(:live_picture), "python", "models"]
+      |> Path.join()
 
-    {:ok, %{}}
+    case :python.start_link([{:python_path, to_charlist(path)}, {:python, ~c"python3"}]) do
+      {:ok, pid} ->
+        Logger.info("Initializing Python Server at pid: #{inspect(pid)}")
+        {:ok, %{python: pid, path: path}}
+
+      response ->
+        response
+    end
   end
 
   @impl true
-  def handle_call({:add_data, data}, _from, state) do
-    :ets.insert(__MODULE__, {data.id, data})
-
-    {:reply, {:ok, data}, state}
+  def handle_call({:create_onnx, model}, _from, %{python: pid, path: path} = state) do
+    output_path = "#{path}/#{model}_model.onnx"
+    result = :python.call(pid, model, :build, [output_path])
+    {:reply, {:ok, result}, state}
   end
 
   ### ==========================================================================
   ### Public APIs
   ### ==========================================================================
-  def insert(data) do
-    GenServer.call(__MODULE__, {:add_data, data})
-  end
-
-  def get(id) do
-    case :ets.lookup(__MODULE__, id) do
-      [{_, value}] -> {:ok, value}
-      _ -> {:error, :not_found}
-    end
-  end
-
-  def all do
-    case :ets.tab2list(__MODULE__) do
-      [] -> []
-      list -> Enum.map(list, fn {_id, elem} -> elem end)
-    end
+  def create_model_onnx(model) do
+    GenServer.call(__MODULE__, {:create_onnx, model})
   end
 
   ### ==========================================================================

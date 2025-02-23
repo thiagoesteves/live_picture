@@ -75,7 +75,6 @@ defmodule LivePictureWeb.PictureLive do
         socket
       ) do
     CommonFlash.clear(@pub_sub_picture_topic)
-    IO.puts("hi")
     {:noreply, stream_insert(socket, :pictures, picture)}
   end
 
