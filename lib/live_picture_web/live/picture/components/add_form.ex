@@ -3,6 +3,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
   use LivePictureWeb, :live_component
 
+  alias LivePicture.Models
   alias LivePicture.Pictures
   alias LivePictureWeb.Components.Image
   alias LivePictureWeb.Components.ModelSelection
@@ -13,7 +14,6 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
     <div>
       <.header>
         {@title}
-        <:subtitle>Type the required info below to add a new picture.</:subtitle>
       </.header>
 
       <.simple_form
@@ -24,7 +24,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:name]} type="text" label="Analysis Name" />
 
         <h3 class="mb-5 text-lg font-medium text-gray-900 dark:text-black">Choose the model:</h3>
         <ul class="grid w-full gap-6 md:grid-cols-3">
@@ -44,7 +44,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
             for={@uploads.picture_file.ref}
             class="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
           >
-            <span>Upload Picture File (.txt) </span>
+            <span>Upload Picture File (.png .jpg .jpeg) </span>
             <.live_file_input upload={@uploads.picture_file} class="sr-only" />
           </label>
           <p class="pl-1">or drag and drop here</p>
@@ -66,7 +66,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
         <% end %>
         <:actions>
           <.button class="absolute right-0 mr-4" phx-disable-with="Saving...">
-            Save Picture
+            Process Picture
           </.button>
         </:actions>
       </.simple_form>
@@ -145,6 +145,9 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
       {:ok, picture} ->
         notify_parent({:saved, picture})
 
+        # Trigger Image Processing
+        Models.process(picture)
+
         {:noreply,
          socket
          |> put_flash(:info, "Picture created successfully")
@@ -177,7 +180,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
   defp upload_static_file(%{path: path}, entry) do
     filename = Path.basename(path) <> ".#{ext(entry)}"
-    dest = Path.join("#{:code.priv_dir(:live_picture)}/static/pictures", filename)
+    dest = Path.join("#{:code.priv_dir(:live_picture)}/pictures", filename)
     File.cp!(path, dest)
     {:ok, "/pictures/#{filename}"}
   end

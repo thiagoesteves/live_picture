@@ -5,13 +5,7 @@ defmodule LivePictureWeb.Components.ModelSelection do
 
   alias LivePictureWeb.Components.Image
 
-  @models [
-    %{name: "model-1", avatar: "vader", url: ""},
-    %{name: "model-2", avatar: "vader", url: ""},
-    %{name: "model-3", avatar: "vader", url: ""}
-  ]
-
-  @default_model hd(@models).name
+  @default_model :alexnet
 
   def content(assigns) do
     ~H"""
@@ -30,7 +24,9 @@ defmodule LivePictureWeb.Components.ModelSelection do
 
   def new do
     models =
-      Enum.map(@models, fn model ->
+      LivePicture.Models.list()
+      |> Enum.map(fn model -> %{name: model, avatar: "vader", url: ""} end)
+      |> Enum.map(fn model ->
         if model.name == @default_model do
           Map.merge(model, %{checkbox: "on"})
         else
@@ -38,7 +34,9 @@ defmodule LivePictureWeb.Components.ModelSelection do
         end
       end)
 
-    %{list: models, default: hd(@models)}
+    default = Enum.find(models, &(&1.name == @default_model))
+
+    %{list: models, default: default}
   end
 
   def select_model(params, model_name) do

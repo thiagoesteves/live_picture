@@ -26,6 +26,21 @@ defmodule LivePicture.Pictures.Storage do
     {:reply, {:ok, data}, state}
   end
 
+  def handle_call({:update_data, data, fields}, _from, state) do
+    current_data = get!(data.id)
+
+    updated_data =
+      fields
+      |> Enum.reduce(current_data, fn field, acc ->
+        value = Map.get(data, field)
+        Map.put(acc, field, value)
+      end)
+
+    :ets.insert(__MODULE__, {updated_data.id, updated_data})
+
+    {:reply, {:ok, updated_data}, state}
+  end
+
   ### ==========================================================================
   ### Public APIs
   ### ==========================================================================
@@ -33,11 +48,20 @@ defmodule LivePicture.Pictures.Storage do
     GenServer.call(__MODULE__, {:add_data, data})
   end
 
+  def update(data, fields) do
+    GenServer.call(__MODULE__, {:update_data, data, fields})
+  end
+
   def get(id) do
     case :ets.lookup(__MODULE__, id) do
       [{_, value}] -> {:ok, value}
       _ -> {:error, :not_found}
     end
+  end
+
+  def get!(id) do
+    {:ok, data} = get(id)
+    data
   end
 
   def all do

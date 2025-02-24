@@ -1,6 +1,7 @@
 defmodule LivePictureWeb.PictureLive do
   use LivePictureWeb, :live_view
 
+  alias LivePicture.Models
   alias LivePicture.Pictures
   alias LivePicture.Pictures.Picture
   alias LivePictureWeb.Components.Status
@@ -23,8 +24,8 @@ defmodule LivePictureWeb.PictureLive do
       <div class="ml-2 mr-2">
         <.table id="pictures" rows={@streams.pictures}>
           <:col :let={{_id, picture}} label="Name">{picture.name}</:col>
-          <:col :let={{_id, picture}} label="Path">{picture.path}</:col>
           <:col :let={{_id, picture}} label="Model">{picture.model}</:col>
+          <:col :let={{_id, picture}} label="Prediction">{picture.prediction}</:col>
           <:col :let={{_id, picture}} label="Upload Status">
             <Status.content status={picture.upload_status} />
           </:col>
@@ -52,9 +53,11 @@ defmodule LivePictureWeb.PictureLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    # Subscrive to receive events for this live component
     if connected?(socket) do
+      # Subscrive to receive events for this live component
       Phoenix.PubSub.subscribe(LivePicture.PubSub, @pub_sub_picture_topic)
+      # Subscribe to receive Pictures update
+      Models.subscribe()
     end
 
     {:ok, stream(socket, :pictures, Pictures.list_pictures())}
@@ -78,7 +81,7 @@ defmodule LivePictureWeb.PictureLive do
     {:noreply, stream_insert(socket, :pictures, picture)}
   end
 
-  def handle_info({:picture_status_updated, picture}, socket) do
+  def handle_info({:picture_update, picture}, socket) do
     {:noreply, stream_insert(socket, :pictures, picture)}
   end
 

@@ -64,14 +64,10 @@ defmodule LivePicture.MixProject do
       {:erlport, "~> 0.10"},
 
       # ML libraries
-      # {:axon_onnx, "~> 0.4.0"},
-      # {:stb_image, "~> 0.6"},
-      # {:exla, "~> 0.9.0"},
-      # {:nx, "~> 0.9.0"}
-      {:axon_onnx, github: "elixir-nx/axon_onnx"},
       {:stb_image, "~> 0.6.0"},
       {:exla, "~> 0.9.0"},
-      {:nx, "~> 0.9.0"}
+      {:nx, "~> 0.9.0"},
+      {:ortex, "~> 0.1.10"}
     ]
   end
 

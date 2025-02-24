@@ -77,4 +77,28 @@ defmodule LivePicture.Pictures do
   def change_picture(%Picture{} = picture, attrs \\ %{}) do
     Picture.changeset(picture, attrs)
   end
+
+  @doc """
+  Update a picture record
+
+  ## Examples
+
+      iex> update_picture(%Picture{}, %{prediction: "bucket"}, [:prediction])
+      {:ok, %Picture{}}
+
+  """
+  def update_picture(%Picture{} = picture, attrs, fields) do
+    response =
+      picture
+      |> Picture.changeset(attrs)
+      |> Ecto.Changeset.apply_action(:update)
+
+    case response do
+      {:ok, picture} ->
+        Storage.update(picture, fields)
+
+      res ->
+        res
+    end
+  end
 end

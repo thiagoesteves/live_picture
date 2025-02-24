@@ -39,3 +39,6 @@ npm-debug.log
 /priv/python/models/*.onnx
 /priv/python/models/__pycache__
 
+# Ignore stored pictures
+
+

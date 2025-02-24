@@ -4,12 +4,15 @@ defmodule LivePicture.Pictures.Picture do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_fields [:name, :path, :model, :upload_status]
+  @type t() :: %__MODULE__{}
+
+  @required_fields [:name, :path, :prediction, :model, :upload_status]
 
   schema "pictures" do
     field(:name, :string)
     field(:path, :string)
-    field(:model, :string)
+    field(:prediction, :string, default: "-/-")
+    field(:model, Ecto.Enum, values: [:alexnet], default: :alexnet)
     field(:upload_status, Ecto.Enum, values: [:uploading, :uploaded])
 
     timestamps(type: :utc_datetime)
@@ -29,6 +32,6 @@ defmodule LivePicture.Pictures.Picture do
   def changeset(picture, attrs) do
     picture
     |> cast(attrs, @required_fields)
-    |> validate_required([:id, :path, :model])
+    |> validate_required(@required_fields)
   end
 end
