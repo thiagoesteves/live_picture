@@ -12,11 +12,15 @@ module.exports = {
     "../lib/live_picture_web/**/*.*ex"
   ],
   theme: {
+    fontFamily: {
+      oswald: ["Oswald"],
+      meaculpa: ["Mea Culpa"]
+    },
     extend: {
       colors: {
         brand: "#FD4F00",
       }
-    },
+    }
   },
   plugins: [
     require("@tailwindcss/forms"),

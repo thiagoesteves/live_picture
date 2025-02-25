@@ -12,24 +12,20 @@ defmodule LivePictureWeb.PictureLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="bg-white rounded" style="min-height: 800px;">
-      <.header class="ml-2 mr-2">
-        <:actions>
-          <.link patch={~p"/pictures/new"}>
-            <.button class="mt-1">New Picture Analysis</.button>
-          </.link>
-        </:actions>
-      </.header>
-
+    <div class="bg-white text-black rounded" style="min-height: 800px;">
       <div class="ml-2 mr-2">
-        <.table id="pictures" rows={@streams.pictures}>
+        <.table_metrics id="pictures" rows={@streams.pictures}>
           <:col :let={{_id, picture}} label="Name">{picture.name}</:col>
+          <:col :let={{_id, picture}} label="Image">
+          <img src={picture.path} style="width: 60px; height: 60px;">
+          </:col>
+
           <:col :let={{_id, picture}} label="Model">{picture.model}</:col>
           <:col :let={{_id, picture}} label="Prediction">{picture.prediction}</:col>
           <:col :let={{_id, picture}} label="Upload Status">
             <Status.content status={picture.upload_status} />
           </:col>
-        </.table>
+        </.table_metrics>
       </div>
     </div>
 

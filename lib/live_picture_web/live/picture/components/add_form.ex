@@ -180,7 +180,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
   defp upload_static_file(%{path: path}, entry) do
     filename = Path.basename(path) <> ".#{ext(entry)}"
-    dest = Path.join("#{:code.priv_dir(:live_picture)}/pictures", filename)
+    dest = Path.join("#{:code.priv_dir(:live_picture)}/static/pictures", filename)
     File.cp!(path, dest)
     {:ok, "/pictures/#{filename}"}
   end

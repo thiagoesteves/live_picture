@@ -43,7 +43,7 @@ defmodule LivePicture.Models.Worker do
         %{model: model, classlist: classlist} = state
       ) do
     image_path =
-      Path.join([:code.priv_dir(:live_picture), path])
+      Path.join([:code.priv_dir(:live_picture), "static", path])
 
     tensor = build_tensor(image_path)
 
