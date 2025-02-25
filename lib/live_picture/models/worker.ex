@@ -27,7 +27,7 @@ defmodule LivePicture.Models.Worker do
     path = Keyword.fetch!(args, :path)
 
     classlist =
-      [:code.priv_dir(:live_picture), "python", "models", "classlist.json"]
+      [:code.priv_dir(:live_picture), "models", "classlist.json"]
       |> Path.join()
       |> File.read!()
       |> Jason.decode!()

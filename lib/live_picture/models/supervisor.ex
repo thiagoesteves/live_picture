@@ -23,7 +23,7 @@ defmodule LivePicture.Models.Supervisor do
   ### ==========================================================================
   def start_child(name) do
     path =
-      [:code.priv_dir(:live_picture), "python", "models", "#{name}_model.onnx"]
+      [:code.priv_dir(:live_picture), "models", "#{name}_model.onnx"]
       |> Path.join()
 
     args = [name: name, path: path]

@@ -18,7 +18,7 @@ defmodule LivePicture.Python do
   @impl true
   def init(_args) do
     path =
-      [:code.priv_dir(:live_picture), "python", "models"]
+      [:code.priv_dir(:live_picture), "models"]
       |> Path.join()
 
     case :python.start_link([{:python_path, to_charlist(path)}, {:python, ~c"python3"}]) do
