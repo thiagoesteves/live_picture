@@ -17,7 +17,7 @@ defmodule LivePictureWeb.PictureLive do
         <.table_metrics id="pictures" rows={@streams.pictures}>
           <:col :let={{_id, picture}} label="Name">{picture.name}</:col>
           <:col :let={{_id, picture}} label="Image">
-          <img src={picture.path} style="width: 60px; height: 60px;">
+            <img src={picture.path} style="width: 60px; height: 60px;" />
           </:col>
 
           <:col :let={{_id, picture}} label="Model">{picture.model}</:col>

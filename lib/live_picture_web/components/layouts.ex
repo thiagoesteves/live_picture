@@ -47,16 +47,15 @@ defmodule LivePictureWeb.Layouts do
         </.link>
       </nav>
       <div class="ml-auto">
-      <.link patch={~p"/pictures/new"}>
-        <button class={[
-          "flex phx-submit-loading:opacity-75 rounded-lg", "
-          bg-gradient-to-tr to-cyan-500 from-blue-500 hover:to-blue-800",
-          "py-2 px-3 text-sm font-semibold leading-6 text-white active:text-white/80"
-        ]}>
-        <Icons.content name={:observer} />
-          New Picture Analysis
-        </button>
-      </.link>
+        <.link patch={~p"/pictures/new"}>
+          <button class={[
+            "flex phx-submit-loading:opacity-75 rounded-lg",
+            "bg-gradient-to-tr to-cyan-500 from-blue-500 hover:to-blue-800",
+            "py-2 px-3 text-sm font-semibold leading-6 text-white active:text-white/80"
+          ]}>
+            <Icons.content name={:machine_learning} /> New Picture Analysis
+          </button>
+        </.link>
       </div>
     </div>
     """
@@ -96,7 +95,7 @@ defmodule LivePictureWeb.Layouts do
     """
   end
 
-  defp path(PictureLive), do: "/pictures"
+  defp path(PictureLive), do: "~p/pictures"
   defp path(:observer), do: "/observer"
 
   defp page_name(PictureLive), do: "pictures"

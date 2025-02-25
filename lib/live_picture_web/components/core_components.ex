@@ -520,7 +520,7 @@ defmodule LivePictureWeb.CoreComponents do
     """
   end
 
-    @doc ~S"""
+  @doc ~S"""
   Renders a table with generic metrics styling.
 
   ## Examples
