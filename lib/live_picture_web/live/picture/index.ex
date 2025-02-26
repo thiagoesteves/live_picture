@@ -12,9 +12,9 @@ defmodule LivePictureWeb.PictureLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="bg-white text-black rounded" style="min-height: 800px;">
+    <div class="bg-white text-black rounded min-h-[700px]">
       <div class="ml-2 mr-2">
-        <.table_metrics id="pictures" rows={@streams.pictures}>
+        <.table_metrics id="pictures" rows={@streams.pictures} h_max_size="h-[700px]">
           <:col :let={{_id, picture}} label="Name">{picture.name}</:col>
           <:col :let={{_id, picture}} label="Image">
             <img src={picture.path} style="width: 60px; height: 60px;" />

@@ -552,7 +552,7 @@ defmodule LivePictureWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="px-4 sm:overflow-visible sm:px-0 ">
+    <div class="px-4 sm:overflow-visible sm:px-0">
       <div
         id={"#{@id}-table"}
         class={["block overflow-y-auto", "#{@h_max_size}"]}

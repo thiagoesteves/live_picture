@@ -1,6 +1,8 @@
 defmodule LivePictureWeb.Router do
   use LivePictureWeb, :router
 
+  import Observer.Web.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -24,6 +26,8 @@ defmodule LivePictureWeb.Router do
     live "/", PictureLive, :index
     live "/pictures", PictureLive, :index
     live "/pictures/new", PictureLive, :new
+
+    observer_dashboard("/observer")
   end
 
   # Other scopes may use custom stacks.

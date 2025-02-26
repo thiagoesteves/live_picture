@@ -63,6 +63,9 @@ defmodule LivePicture.MixProject do
       {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
       {:erlport, "~> 0.10"},
 
+      # Observability
+      {:observer_web, "~> 0.1.0"},
+
       # ML libraries
       {:stb_image, "~> 0.6.0"},
       {:exla, "~> 0.9.0"},
