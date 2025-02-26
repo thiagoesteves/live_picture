@@ -21,12 +21,9 @@ defmodule LivePicture.Models.Supervisor do
   ### ==========================================================================
   ### Public API functions
   ### ==========================================================================
-  def start_child(name) do
-    path =
-      [:code.priv_dir(:live_picture), "models", "#{name}_model.onnx"]
-      |> Path.join()
-
-    args = [name: name, path: path]
+  @spec start_child(atom(), String.t()) :: {:ok, pid} | {:error, pid(), :already_started}
+  def start_child(name, onnx_model_path) do
+    args = [name: name, onnx_model_path: onnx_model_path]
 
     spec = %{
       id: LivePicture.Models.Worker,

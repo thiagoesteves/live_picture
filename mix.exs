@@ -61,10 +61,12 @@ defmodule LivePicture.MixProject do
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
-      {:erlport, "~> 0.10"},
 
       # Observability
       {:observer_web, "~> 0.1.0"},
+
+      # Python libraries
+      {:pythonx, "~> 0.3.0"},
 
       # ML libraries
       {:stb_image, "~> 0.6.0"},

@@ -14,7 +14,6 @@ defmodule LivePicture.Application do
     children = [
       LivePictureWeb.Telemetry,
       LivePicture.Pictures.Storage,
-      LivePicture.Python,
       LivePicture.Models.Supervisor,
       {DNSCluster, query: Application.get_env(:live_picture, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: LivePicture.PubSub},

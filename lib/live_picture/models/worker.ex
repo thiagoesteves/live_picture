@@ -24,7 +24,7 @@ defmodule LivePicture.Models.Worker do
   @impl true
   def init(args) do
     name = Keyword.fetch!(args, :name)
-    path = Keyword.fetch!(args, :path)
+    onnx_model_path = Keyword.fetch!(args, :onnx_model_path)
 
     classlist =
       [:code.priv_dir(:live_picture), "models", "classlist.json"]
@@ -32,7 +32,7 @@ defmodule LivePicture.Models.Worker do
       |> File.read!()
       |> Jason.decode!()
 
-    model = Ortex.load(path)
+    model = Ortex.load(onnx_model_path)
 
     {:ok, %{model: model, classlist: classlist, name: name}}
   end
