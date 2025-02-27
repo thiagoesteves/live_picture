@@ -187,9 +187,9 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
   defp upload_static_file(%{path: path}, entry) do
     filename = Path.basename(path) <> ".#{ext(entry)}"
-    dest = Path.join("#{:code.priv_dir(:live_picture)}/static/pictures", filename)
+    dest = Path.join("#{:code.priv_dir(:live_picture)}/static/uploads", filename)
     File.cp!(path, dest)
-    {:ok, "/pictures/#{filename}"}
+    {:ok, "/uploads/#{filename}"}
   end
 
   defp error_to_string(:too_large), do: "Too large"
