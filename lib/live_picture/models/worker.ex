@@ -42,6 +42,12 @@ defmodule LivePicture.Models.Worker do
         {:process, %{path: path} = picture},
         %{model: model, classlist: classlist} = state
       ) do
+    {:ok, picture} =
+      Pictures.update_picture(picture, %{analysis_status: :processing}, [:analysis_status])
+
+    # NOTE: Notify Start of the analysis
+    notify(picture)
+
     image_path =
       Path.join([:code.priv_dir(:live_picture), "static", path])
 
@@ -57,14 +63,14 @@ defmodule LivePicture.Models.Worker do
 
     prediction = Map.get(classlist, to_string(prediction_id))
 
-    {:ok, updated_picture} =
-      Pictures.update_picture(picture, %{prediction: prediction}, [:prediction])
+    {:ok, picture} =
+      Pictures.update_picture(picture, %{prediction: prediction, analysis_status: :processed}, [
+        :prediction,
+        :analysis_status
+      ])
 
-    Phoenix.PubSub.broadcast(
-      LivePicture.PubSub,
-      @worker_topic,
-      {:picture_update, updated_picture}
-    )
+    # NOTE: Notify End of the analysis
+    notify(picture)
 
     {:noreply, state}
   end
@@ -84,6 +90,14 @@ defmodule LivePicture.Models.Worker do
   ### ==========================================================================
   ### Private Functions
   ### ==========================================================================
+  defp notify(picture) do
+    Phoenix.PubSub.broadcast(
+      LivePicture.PubSub,
+      @worker_topic,
+      {:picture_update, picture}
+    )
+  end
+
   defp build_tensor(path_to_image) do
     {:ok, buffer} = File.read(path_to_image)
     {:ok, image} = StbImage.read_binary(buffer)

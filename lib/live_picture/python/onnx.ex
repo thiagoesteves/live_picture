@@ -6,10 +6,10 @@ defmodule LivePicture.Python.Onnx do
   require Logger
 
   @doc """
-  Create Onnx file for the respective model
+  This function initializes the Pythonx
   """
-  @spec create(atom(), String.t()) :: :ok
-  def create(_model, onnx_model_path) do
+  @spec init() :: :ok
+  def init do
     Pythonx.uv_init("""
     [project]
     name = "live_picture"
@@ -21,30 +21,42 @@ defmodule LivePicture.Python.Onnx do
       "onnx == 1.17.0"
     ]
     """)
+  end
 
-    {_result, _globals} =
-      Pythonx.eval(
-        """
-        import torchvision
-        import torch
+  @doc """
+  Create Onnx file (if the models doesn't exist) for the respective model
+  """
+  @spec create(atom(), String.t()) :: :ok
+  def create(_model, onnx_model_path) do
+    case File.exists?(onnx_model_path) do
+      true ->
+        :ok
 
-        from torchvision.models import alexnet, AlexNet_Weights
+      false ->
+        {_result, _globals} =
+          Pythonx.eval(
+            """
+            import torchvision
+            import torch
 
-        net = alexnet(weights=AlexNet_Weights.IMAGENET1K_V1)
+            from torchvision.models import alexnet, AlexNet_Weights
 
-        input_names = [ "input" ]
-        output_names = [ "output" ]
+            net = alexnet(weights=AlexNet_Weights.IMAGENET1K_V1)
 
-        input_shape = (3, 224, 224)
-        batch_size = 1
-        dummy_input = torch.randn(batch_size, *input_shape) 
+            input_names = [ "input" ]
+            output_names = [ "output" ]
 
-        output = torch.onnx.export(net, dummy_input, "#{onnx_model_path}", verbose=False, input_names=input_names, output_names=output_names)
-        """,
-        %{}
-      )
+            input_shape = (3, 224, 224)
+            batch_size = 1
+            dummy_input = torch.randn(batch_size, *input_shape) 
 
-    :ok
+            output = torch.onnx.export(net, dummy_input, "#{onnx_model_path}", verbose=False, input_names=input_names, output_names=output_names)
+            """,
+            %{}
+          )
+
+        :ok
+    end
   end
 
   ### ==========================================================================

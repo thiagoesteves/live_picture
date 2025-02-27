@@ -20,10 +20,13 @@ defmodule LivePictureWeb.PictureLive do
             <img src={picture.path} style="width: 60px; height: 60px;" />
           </:col>
 
-          <:col :let={{_id, picture}} label="Model">{picture.model}</:col>
+          <:col :let={{_id, picture}} label="Model">{String.upcase("#{picture.model}")}</:col>
           <:col :let={{_id, picture}} label="Prediction">{picture.prediction}</:col>
-          <:col :let={{_id, picture}} label="Upload Status">
+          <:col :let={{_id, picture}} label="Upload">
             <Status.content status={picture.upload_status} />
+          </:col>
+          <:col :let={{_id, picture}} label="Analysis">
+            <Status.content status={picture.analysis_status} />
           </:col>
         </.table_metrics>
       </div>
@@ -83,12 +86,12 @@ defmodule LivePictureWeb.PictureLive do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Picture Analysis")
+    |> assign(:page_title, "Analysis Results")
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Picture")
+    |> assign(:page_title, "New Picture Anlysis")
     |> assign(:picture, %Picture{})
   end
 end

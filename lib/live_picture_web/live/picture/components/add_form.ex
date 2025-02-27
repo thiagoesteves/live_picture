@@ -24,18 +24,10 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Analysis Name" />
-
-        <h3 class="mb-5 text-lg font-medium text-gray-900 dark:text-black">Choose the model:</h3>
-        <ul class="grid w-full gap-6 md:grid-cols-3">
-          <%= for model <- @model.list do %>
-            <ModelSelection.content model={model} target={@myself} />
-          <% end %>
-        </ul>
-        <br />
+        <.input field={@form[:name]} type="text" label="Analysis Name (required)" />
 
         <div
-          class="flex flex-col bg-gray-100 items-center justify-center py-10 text-center border border-dashed border-gray-900/25 rounded text-sm leading-6 text-gray-600"
+          class="flex flex-col bg-gray-100 items-center justify-center py-4 text-center border border-dashed border-gray-900/25 rounded text-sm leading-6 text-gray-600"
           phx-drop-target={@uploads.picture_file.ref}
         >
           <Image.content image="file" size="medium" />
@@ -52,7 +44,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
         <%= for file <- @uploads.picture_file.entries do %>
           <div class="flex items-center">
-            <Image.content image="file" size="medium" />
+            <Image.content image="file" size="medium" color="indigo" />
             <progress value={file.progress} max="100" />
             <button
               class="ml-2"
@@ -60,14 +52,28 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
               phx-target={@myself}
               phx-value-ref={file.ref}
             >
-              <Image.content image="cancel" size="small" />
+              <Image.content image="cancel" size="small" color="indigo" />
             </button>
           </div>
         <% end %>
+        <h3 class="text-lg font-medium text-gray-900">Choose the model:</h3>
+        <ul class="grid grid-cols-5 gap-x-2 w-full">
+          <%= for model <- @model.list do %>
+            <ModelSelection.content model={model} target={@myself} />
+          <% end %>
+        </ul>
+
         <:actions>
-          <.button class="absolute right-0 mr-4" phx-disable-with="Saving...">
+          <button
+            class={[
+              "absolute right-0 mr-4 phx-submit-loading:opacity-75 rounded-lg",
+              "bg-gradient-to-tr to-cyan-500 from-blue-500 hover:to-blue-800",
+              "py-2 px-3 text-sm font-semibold leading-6 text-white active:text-white/80"
+            ]}
+            phx-disable-with="Starting..."
+          >
             Process Picture
-          </.button>
+          </button>
         </:actions>
       </.simple_form>
 
@@ -125,7 +131,8 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
   end
 
   def handle_event("select-model", %{"model" => name}, socket) do
-    model = ModelSelection.select_model(socket.assigns.model, name)
+    model_name = String.to_existing_atom(name)
+    model = ModelSelection.select_model(socket.assigns.model, model_name)
 
     {:noreply, assign(socket, :model, model)}
   end

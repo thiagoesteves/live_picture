@@ -18,6 +18,8 @@ defmodule LivePicture.Models do
     # Create model directory if doesn't exist
     File.mkdir_p!(base_onnx_dir())
 
+    :ok = Onnx.init()
+
     Enum.each(list(), fn model when is_atom(model) ->
       Logger.info("Creating Onnx model for #{model}")
       :ok = Onnx.create(model, onnx_model_path(model))

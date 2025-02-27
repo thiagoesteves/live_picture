@@ -3,40 +3,31 @@ defmodule LivePictureWeb.Components.ModelSelection do
 
   use Phoenix.Component
 
-  alias LivePictureWeb.Components.Image
-
-  @default_model :alexnet
-
   def content(assigns) do
     ~H"""
-    <li>
-      <button
-        class={selected_button_class(@model.checkbox)}
-        phx-target={@target}
-        phx-click="select-model"
-        phx-value-model={@model.name}
-      >
-        <.model_label model={@model} />
-      </button>
-    </li>
+    <button
+      type="button"
+      class={selected_button_class(@model.checkbox)}
+      phx-target={@target}
+      phx-click="select-model"
+      phx-value-model={@model.name}
+    >
+      <.model_label model={@model} />
+    </button>
     """
   end
 
   def new do
     models =
-      LivePicture.Models.list()
-      |> Enum.map(fn model -> %{name: model, avatar: "vader", url: ""} end)
-      |> Enum.map(fn model ->
-        if model.name == @default_model do
-          Map.merge(model, %{checkbox: "on"})
+      Enum.with_index(LivePicture.Models.list(), fn model, index ->
+        if index == 0 do
+          %{name: model, checkbox: "on"}
         else
-          Map.merge(model, %{checkbox: "off"})
+          %{name: model, checkbox: "off"}
         end
       end)
 
-    default = Enum.find(models, &(&1.name == @default_model))
-
-    %{list: models, default: default}
+    %{list: models, default: hd(models)}
   end
 
   def select_model(params, model_name) do
@@ -53,19 +44,8 @@ defmodule LivePictureWeb.Components.ModelSelection do
 
   defp model_label(assigns) do
     ~H"""
-    <div class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-blue-600 hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
-      <div class="block">
-        <div class="grid grid-cols-2 content-center">
-          <Image.content image={@model.avatar} size="medium" />
-          <div class="w-full text-xs">{@model.name}</div>
-        </div>
-        <a
-          href={@model.url}
-          class="text-xs text-center text-blue-100 dark:text-blue-500 hover:underline"
-        >
-          model reference
-        </a>
-      </div>
+    <div class="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-blue-600 hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+      <div class="w-full font-mono text-l">{String.upcase("#{@model.name}")}</div>
     </div>
     """
   end
