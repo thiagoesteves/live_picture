@@ -23,9 +23,29 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+
+let hooks = {}
+
+hooks.ScrollBottom = {
+  mounted() {
+    this.el.scrollTo(0, this.el.scrollHeight);
+  },
+
+  updated() {
+    const pixelsBelowBottom =
+      this.el.scrollHeight - this.el.clientHeight - this.el.scrollTop;
+
+    if (pixelsBelowBottom < this.el.clientHeight * 0.3) {
+      this.el.scrollTo(0, this.el.scrollHeight);
+    }
+  },
+};
+
+
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: {_csrf_token: csrfToken},
+  hooks
 })
 
 // Show progress bar on live navigation and form submits

@@ -22,6 +22,7 @@ defmodule LivePictureWeb.PictureLive do
 
           <:col :let={{_id, picture}} label="Model">{String.upcase("#{picture.model}")}</:col>
           <:col :let={{_id, picture}} label="Prediction">{picture.prediction}</:col>
+          <:col :let={{_id, picture}} label="Duration (us)">{picture.duration}</:col>
           <:col :let={{_id, picture}} label="Upload">
             <Status.content status={picture.upload_status} />
           </:col>

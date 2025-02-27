@@ -51,23 +51,30 @@ defmodule LivePicture.Models.Worker do
     image_path =
       Path.join([:code.priv_dir(:live_picture), "static", path])
 
-    tensor = build_tensor(image_path)
+    {time_in_microseconds, prediction_id} =
+      :timer.tc(fn ->
+        tensor = build_tensor(image_path)
 
-    {output} = Ortex.run(model, tensor)
+        {output} = Ortex.run(model, tensor)
 
-    prediction_id =
-      output
-      |> Nx.backend_transfer()
-      |> Nx.argmax()
-      |> Nx.to_number()
+        output
+        |> Nx.backend_transfer()
+        |> Nx.argmax()
+        |> Nx.to_number()
+      end)
 
     prediction = Map.get(classlist, to_string(prediction_id))
 
     {:ok, picture} =
-      Pictures.update_picture(picture, %{prediction: prediction, analysis_status: :processed}, [
-        :prediction,
-        :analysis_status
-      ])
+      Pictures.update_picture(
+        picture,
+        %{prediction: prediction, duration: time_in_microseconds, analysis_status: :processed},
+        [
+          :prediction,
+          :analysis_status,
+          :duration
+        ]
+      )
 
     # NOTE: Notify End of the analysis
     notify(picture)

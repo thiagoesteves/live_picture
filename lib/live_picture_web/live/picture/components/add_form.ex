@@ -3,6 +3,8 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
   use LivePictureWeb, :live_component
 
+  require Logger
+
   alias LivePicture.Models
   alias LivePicture.Pictures
   alias LivePictureWeb.Components.Image
@@ -138,30 +140,47 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
   end
 
   defp save_picture(socket, :new, params) do
-    [selected_model] =
-      socket.assigns.model.list
-      |> Enum.filter(fn model -> model.checkbox == "on" end)
-
-    response =
-      params_with_file(socket, params)
+    params_with_file =
+      socket
+      |> params_with_file(params)
       |> Map.put("upload_status", :uploaded)
-      |> Map.put("model", selected_model.name)
-      |> Pictures.create_picture()
 
-    case response do
-      {:ok, picture} ->
-        notify_parent({:saved, picture})
+    create_analysis = fn model ->
+      response =
+        params_with_file
+        |> Map.put("model", model.name)
+        |> Pictures.create_picture()
 
-        # Trigger Image Processing
-        Models.process(picture)
+      case response do
+        {:ok, picture} ->
+          notify_parent({:saved, picture})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Picture created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+          # Trigger Image Processing
+          Models.process(picture)
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+          :ok
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          Logger.error("Error trying to create analysis for #{inspect(changeset)}")
+          :error
+      end
+    end
+
+    results =
+      socket.assigns.model.list
+      |> Enum.filter(&(&1.checkbox == "on"))
+      |> Enum.map(&create_analysis.(&1))
+
+    if Enum.all?(results, &(&1 == :ok)) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "All Analysis created successfully")
+       |> push_patch(to: socket.assigns.patch)}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, "Errors while creating analysis")
+       |> push_patch(to: socket.assigns.patch)}
     end
   end
 

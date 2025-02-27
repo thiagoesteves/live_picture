@@ -6,12 +6,21 @@ defmodule LivePicture.Pictures.Picture do
 
   @type t() :: %__MODULE__{}
 
-  @required_fields [:name, :path, :prediction, :model, :upload_status, :analysis_status]
+  @required_fields [
+    :name,
+    :path,
+    :prediction,
+    :model,
+    :upload_status,
+    :analysis_status,
+    :duration
+  ]
 
   schema "pictures" do
     field(:name, :string)
     field(:path, :string)
     field(:prediction, :string, default: "-/-")
+    field(:duration, :integer, default: 0)
 
     field(:model, Ecto.Enum,
       values: [:alexnet, :convnext, :resnet18, :squeezenet, :vgg16],

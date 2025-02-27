@@ -95,7 +95,7 @@ defmodule LivePictureWeb.Layouts do
     """
   end
 
-  defp path(PictureLive), do: "~p/pictures"
+  defp path(PictureLive), do: "/pictures"
   defp path(:observer), do: "/observer"
 
   defp page_name(PictureLive), do: "pictures"

@@ -33,13 +33,19 @@ defmodule LivePictureWeb.Components.ModelSelection do
   def select_model(params, model_name) do
     updated_model_list =
       Enum.map(params.list, fn model ->
-        case model.name do
-          ^model_name -> %{model | checkbox: "on"}
-          _ -> %{model | checkbox: "off"}
+        case model do
+          %{name: ^model_name, checkbox: "on"} -> %{model | checkbox: "off"}
+          %{name: ^model_name, checkbox: "off"} -> %{model | checkbox: "on"}
+          _ -> model
         end
       end)
 
-    %{params | list: updated_model_list}
+    # Check that at least one model has to be selected
+    if Enum.find(updated_model_list, &(&1.checkbox == "on")) do
+      %{params | list: updated_model_list}
+    else
+      params
+    end
   end
 
   defp model_label(assigns) do
