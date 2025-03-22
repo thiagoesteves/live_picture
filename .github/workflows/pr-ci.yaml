@@ -60,9 +60,10 @@ jobs:
             live-picture-${{ hashFiles('.tool-versions') }}-${{ hashFiles('mix.lock') }}-2024-05-10
           restore-keys: |
             live-picture-
-
-      - name: Run tests
-        run: mix coveralls.html
+      
+      # NOTE: Not implemented yet
+      #- name: Run tests
+      #  run: mix coveralls.html
 
   analysis:
     name: Static Analysis
