@@ -59,7 +59,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
           </div>
         <% end %>
         <h3 class="text-lg font-medium text-gray-900">Choose the model:</h3>
-        <ul class="grid grid-cols-5 gap-x-2 w-full">
+        <ul class="grid grid-cols-5 gap-x-2 gap-y-1 w-full">
           <%= for model <- @model.list do %>
             <ModelSelection.content model={model} target={@myself} />
           <% end %>
@@ -67,6 +67,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
 
         <:actions>
           <button
+            :if={@form.params["name"] not in ["", nil]}
             class={[
               "absolute right-0 mr-4 phx-submit-loading:opacity-75 rounded-lg",
               "bg-gradient-to-tr to-cyan-500 from-blue-500 hover:to-blue-800",
@@ -105,7 +106,7 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
      |> allow_upload(:picture_file,
        accept: ~w(.png .jpg .jpeg),
        max_entries: 1,
-       max_file_size: 9_000_000,
+       max_file_size: 15_000_000,
        auto_upload: true
      )}
   end
@@ -129,7 +130,12 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
   end
 
   def handle_event("save", %{"picture" => picture_params}, socket) do
-    save_picture(socket, socket.assigns.action, picture_params)
+    params_with_file =
+      socket
+      |> params_with_file(picture_params)
+      |> Map.put("upload_status", :uploaded)
+
+    save_picture(socket, socket.assigns.action, params_with_file)
   end
 
   def handle_event("select-model", %{"model" => name}, socket) do
@@ -139,15 +145,17 @@ defmodule LivePictureWeb.PictureLive.Components.AddForm do
     {:noreply, assign(socket, :model, model)}
   end
 
-  defp save_picture(socket, :new, params) do
-    params_with_file =
-      socket
-      |> params_with_file(params)
-      |> Map.put("upload_status", :uploaded)
+  defp save_picture(socket, :new, %{"path" => nil}) do
+    {:noreply,
+     socket
+     |> put_flash(:error, "No file selected")
+     |> push_patch(to: socket.assigns.patch)}
+  end
 
+  defp save_picture(socket, :new, params) do
     create_analysis = fn model ->
       response =
-        params_with_file
+        params
         |> Map.put("model", model.name)
         |> Pictures.create_picture()
 

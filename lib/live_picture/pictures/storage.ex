@@ -65,10 +65,13 @@ defmodule LivePicture.Pictures.Storage do
   end
 
   def all do
-    case :ets.tab2list(__MODULE__) do
-      [] -> []
-      list -> Enum.map(list, fn {_id, elem} -> elem end)
-    end
+    elements =
+      case :ets.tab2list(__MODULE__) do
+        [] -> []
+        list -> Enum.map(list, fn {_id, elem} -> elem end)
+      end
+
+    Enum.sort_by(elements, & &1.inserted_at, :asc)
   end
 
   ### ==========================================================================
