@@ -4,6 +4,8 @@
 
 **Live Picture** is a Phoenix LiveView application designed for image analysis using machine learning (ML) techniques.
 
+[Watch Live Picture](https://github.com/user-attachments/assets/296658a8-300e-45f3-9764-294b8c46fc4b)
+
 We currently use **Pythonx** and **EXLA** for integrating Python-based ML models and accelerating numerical computations.
 
 ### 🔧 Technologies Used
